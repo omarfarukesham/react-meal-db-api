@@ -5,13 +5,13 @@ import Product from '../Products/Product';
 import './Main.css'
 
 const Main = () => {
-    const[goods, setGoods] = useState([])
+    const[products, setProducts] = useState([])
     const[cart, setCart] = useState([])
 // console.log(foods)
     useEffect(()=>{
         fetch('products.json')
         .then(res => res.json())
-        .then(data => setGoods(data.slice(0,12)))
+        .then(data => setProducts(data))
     },[])
 
     useEffect(()=>{
@@ -19,7 +19,7 @@ const Main = () => {
         const storedCart = getStoredCart() 
         let saveCart = []
        for(const id in storedCart ){
-           let addedCart = goods.find(product => product.id === id)
+           let addedCart = products.find(pd => pd.id === id)
            if(addedCart){
             const quantity = storedCart[id] 
              addedCart.quantity = quantity
@@ -28,14 +28,25 @@ const Main = () => {
         }
       setCart(saveCart)
 
-    },[goods])
+    },[products])
 
 
-    const orderHandler = (product) =>{
+    const orderHandler = (selectId) =>{
        // console.log(product);
-       const newCart = [...cart, product]
+       const exists= cart.find(product => product.id === selectId.id)
+       let newCart = [];
+       if(!exists){
+            selectId.quantity = 1
+            newCart = [...cart, selectId]
+       }else{
+            const rest = cart.filter(product => product.id !== selectId.id)
+            exists.quantity = exists.quantity + 1;
+            newCart = [...rest, exists]
+       }
+      
+     
        setCart(newCart)
-       addToDb(product.id)
+       addToDb(selectId.id)
     }
 
 
@@ -44,7 +55,7 @@ const Main = () => {
             <div className="all--products col-md-8">
                 <div className='row'>
                     { 
-                      goods.map(product => <Product 
+                      products.map(product => <Product 
                         key={product.id}
                         product={product}
                         orderHandler = {orderHandler}
