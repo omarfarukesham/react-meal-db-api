@@ -1,10 +1,12 @@
 import React from 'react';
 
 const Cart = ({cart}) => {
-   
+    console.log(cart)
     let total = 0
     let shipping = 0
+    let quantity = 0
  for(const product of cart){
+        quantity = quantity + product.quantity;
         total = total + product.price
         shipping = shipping + product.shipping
 
@@ -17,7 +19,7 @@ const Cart = ({cart}) => {
     return (
         <div>
              <h1>Order summary section</h1>
-                <h4>Quantity:{' '} {cart.length}</h4>
+                <h4>Quantity:{' '} {quantity}</h4>
                 <h4>Price:{" "}${total}</h4>
                 <h4>Shipping:{' '} ${shipping}</h4>
                 <h4>Tax:$ {tax}</h4>
